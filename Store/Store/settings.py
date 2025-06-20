@@ -26,9 +26,9 @@ AUTH_USER_MODEL = 'main.CustomUser'
 SECRET_KEY = 'django-insecure-^bgj2dtv-8n$c#&#qa6l4$)ud=j+fw$4cj^ygxu&nz9=!&fiqq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['your-app-name.onrender.com']
 
 
 # Application definition
