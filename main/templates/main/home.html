@@ -1,0 +1,119 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Mauli Traders - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <video autoplay muted loop class="hero-video">
+        <source src="{% static 'main/videos/construction.mp4' %}" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <div class="hero-overlay">
+        <h1>Mauli Traders</h1>
+        <p>Your One-Stop Hardware & Building Supplies Partner</p>
+        <a href="#products" class="cta-btn">Explore Products</a>
+    </div>
+</section>
+
+
+<!-- About Section -->
+<section class="about-us">
+    <div class="about-content">
+        <h2>Why Choose Mauli Traders?</h2>
+        <p>We offer top-quality hardware, tools, plumbing, and electrical supplies trusted by thousands of builders,
+            contractors, and homeowners across India. We also provide doorstep delivery, best-in-class support, and
+            unbeatable prices.</p>
+        <ul>
+            <li>✔ Wide Product Range</li>
+            <li>✔ Trusted Suppliers</li>
+            <li>✔ Timely Delivery</li>
+            <li>✔ Expert Assistance</li>
+        </ul>
+    </div>
+    <img src="{% static 'main/images/logo.png' %}" alt="Mauli Traders Store">
+</section>
+
+
+<!-- Categories -->
+<section class="categories" id="products">
+    <h2>Shop by Categories</h2>
+    <div class="scroll-wrapper">
+        <div class="category-grid">
+            <a href="{% url 'category_page' 'tools' %}" class="cat-card">
+                <img src="{% static 'main/images/tools.jpg' %}" alt="Tools">
+                <h3>Power Tools</h3>
+            </a>
+
+            <a href="{% url 'category_page' 'tools' %}" class="cat-card">
+                <img src="{% static 'main/images/building.jpg' %}" alt="Tools">
+                <h3>Building Materials</h3>
+            </a>
+
+            <a href="{% url 'category_page' 'plumbing' %}" class="cat-card">
+                <img src="{% static 'main/images/plumbing.jpg' %}" alt="Plumbing">
+                <h3>Plumbing</h3>
+            </a>
+
+            <a href="{% url 'category_page' 'paint' %}" class="cat-card">
+                <img src="{% static 'main/images/paint.jpg' %}" alt="Paint">
+                <h3>Paint & Finishes</h3>
+            </a>
+
+            <a href="{% url 'category_page' 'electrical' %}" class="cat-card">
+                <img src="{% static 'main/images/electrical.jpg' %}" alt="Electrical">
+                <h3>Electrical</h3>
+            </a>
+
+            <!-- Add more like below -->
+            <a href="{% url 'category_page' 'water-pumps' %}" class="cat-card">
+                <img src="{% static 'main/images/waterpumps.jpg' %}" alt="Water Pumps">
+                <h3>Water Pumps</h3>
+            </a>
+
+            <a href="{% url 'category_page' 'water-pumps' %}" class="cat-card">
+                <img src="{% static 'main/images/waterpumps.jpg' %}" alt="Water Pumps">
+                <h3>Water Pumps</h3>
+            </a>
+
+            <a href="{% url 'category_page' 'water-pumps' %}" class="cat-card">
+                <img src="{% static 'main/images/waterpumps.jpg' %}" alt="Water Pumps">
+                <h3>Water Pumps</h3>
+            </a>
+
+            <a href="{% url 'category_page' 'water-pumps' %}" class="cat-card">
+                <img src="{% static 'main/images/waterpumps.jpg' %}" alt="Water Pumps">
+                <h3>Water Pumps</h3>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- Testimonials -->
+<section class="testimonials">
+    <h2>What Our Customers Say</h2>
+    <div class="testimonial-grid">
+        <div class="testimonial">
+            <p>"Amazing service and quality tools. They always deliver on time."</p>
+            <h4>- Rajesh Contractor</h4>
+        </div>
+        <div class="testimonial">
+            <p>"Our go-to hardware partner. Mauli Traders never disappoints."</p>
+            <h4>- Sneha Patil</h4>
+        </div>
+        <div class="testimonial">
+            <p>"The best hardware store in the city with fair pricing."</p>
+            <h4>- Karan Mehta</h4>
+        </div>
+    </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="contact-cta">
+    <h2>Have a Bulk Order or Custom Requirement?</h2>
+    <p>Contact us directly to get the best deals for your needs.</p>
+    <a href="{% url 'contact' %}" class="cta-btn">Contact Us</a>
+</section>
+{% endblock %}
