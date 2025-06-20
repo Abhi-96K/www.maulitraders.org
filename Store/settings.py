@@ -26,9 +26,9 @@ AUTH_USER_MODEL = 'main.CustomUser'
 SECRET_KEY = 'django-insecure-^bgj2dtv-8n$c#&#qa6l4$)ud=j+fw$4cj^ygxu&nz9=!&fiqq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['www-maulitraders-org.onrender.com']
 
 
 # Application definition
@@ -134,7 +134,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '1.maulitraders@gmail.com'
 EMAIL_HOST_PASSWORD = 'ccfr tuug zrsc ojzy'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 
 
