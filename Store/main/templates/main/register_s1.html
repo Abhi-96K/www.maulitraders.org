@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Shop Registration - Step 1</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/css/registration.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+    <div class="registration-box">
+        <h2>Step 1: Your Personal Details</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="error">{{ field.errors.0 }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn">Next →</button>
+        </form>
+        <p class="back-link">
+            <a href="{% url 'register_customer' %}">←← Go Back for Customer Registration</a>
+        </p>
+        <p class="back-link">
+            <a href="{% url 'register' %}">←← Go Back for Registration Options</a>
+        </p>
+
+        <p class="terms">
+            By registering, you agree to our <a href="{% url 'terms_conditions' %}">Terms & Conditions</a>.
+        </p>
+
+        <p class="terms">
+            Allready Have An Account <a href="{% url 'login' %}">Login</a>.
+        </p>
+    </div>
+
+</body>
+
+</html>
