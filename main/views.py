@@ -92,7 +92,7 @@ def register_customer(request):
                 except IntegrityError:
                     form.add_error('email', 'This email is already in use.')
         else:
-            messages.error(request, "Please correct the errors below.")
+            messages.error(request, "password mismatched please enter the matching password.")
     else:
         form = CustomUserForm()
 
