@@ -2,3 +2,6 @@ Django>=4.2,<5.0
 gunicorn
 dj-database-url
 whitenoise
+
+#!/usr/bin/env bash
+python manage.py collectstatic --no-input
