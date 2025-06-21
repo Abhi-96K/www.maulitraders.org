@@ -62,7 +62,7 @@ Your shop registration with Mauli Traders has been successfully approved by our 
 
 You can now log in using your registered email and password to manage your shop, add products, and begin your journey with us.
 
-🔑 Login Access: http://127.0.0.1:8000/login/
+🔑 Login Access: https://www-maulitraders-org.onrender.com/login/
 
 We’re excited to have you on board and look forward to a successful collaboration.
 
