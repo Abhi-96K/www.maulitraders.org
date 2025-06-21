@@ -5,14 +5,25 @@
     <meta charset="UTF-8">
     <title>Shop Registration - Step 1</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/registration.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
-
     <div class="registration-box">
         <h2>Step 1: Your Personal Details</h2>
+
+        <!-- ✅ Message Block -->
+        {% if messages %}
+        <div class="django-messages">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <form method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -26,6 +37,7 @@
             {% endfor %}
             <button type="submit" class="btn">Next →</button>
         </form>
+
         <p class="back-link">
             <a href="{% url 'register_customer' %}">←← Go Back for Customer Registration</a>
         </p>
@@ -38,10 +50,20 @@
         </p>
 
         <p class="terms">
-            Allready Have An Account <a href="{% url 'login' %}">Login</a>.
+            Already have an account? <a href="{% url 'login' %}">Login</a>.
         </p>
     </div>
 
+    <!-- ✅ Optional Auto-Dismiss JS -->
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(el => {
+                el.style.transition = "opacity 0.6s ease-out";
+                el.style.opacity = 0;
+                setTimeout(() => el.remove(), 600);
+            });
+        }, 5000);
+    </script>
 </body>
 
 </html>
