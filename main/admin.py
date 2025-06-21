@@ -46,11 +46,10 @@ class CustomUserAdmin(UserAdmin):
 
                 # ✅ Get full_name from UserProfile (not CustomUser)
                 try:
-                    full_name = user.userprofile.full_name
-
-                except UserProfile.DoesNotExist:
+                    user_profile = UserProfile.objects.filter(user=user).first()
+                    full_name = user_profile.full_name if user_profile else "Shop Owner"
+                except Exception:
                     full_name = "Shop Owner"
-
                 # ✅ Send system-generated email
                 send_mail(
                     subject="Your Shop Has Been Approved - Mauli Traders",
