@@ -227,7 +227,7 @@ body {
 .about-us {
     display: flex;
     padding: 60px;
-    background: linear-gradient(180deg, rgb(40, 40, 40), rgb(247, 246, 246));
+    background: linear-gradient(180deg, rgb(40, 40, 40), rgb(255, 255, 255));
     align-items: center;
     gap: 40px;
 }
