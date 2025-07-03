@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Hardware Store{% endblock %}</title>
+    {% block css_links %}
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    {% endblock %}
+
+
+
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'about' %}">About Us</a>
+            <a href="#products">Products</a>
+
+
+            <!-- Add more links here if needed -->
+        </div>
+
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <a href="{% url 'cart' %}">My Cart</a>
+                <a href="{% url 'profile' %}">Profile</a>
+                <button type="submit" class="nav-btn">Logout</button>
+
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Shop Registration - Step 2</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/css/registration.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="registration-box">
+        <h2>Step 2: Shop Details</h2>
+
+        <!-- ✅ Django Message Block -->
+        {% if messages %}
+        <div class="django-messages">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="error">{{ field.errors.0 }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn">Submit</button>
+        </form>
+
+        <p class="back-link">
+            <a href="{% url 'register_s1' %}">←← Go Back to Personal Details</a>
+        </p>
+    </div>
+
+    <!-- ✅ Auto-dismiss messages after 5s -->
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(el => {
+                el.style.transition = "opacity 0.6s ease-out";
+                el.style.opacity = 0;
+                setTimeout(() => el.remove(), 600);
+            });
+        }, 5000);
+    </script>
+</body>
+
+</html>

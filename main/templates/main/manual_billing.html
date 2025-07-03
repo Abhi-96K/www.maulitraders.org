@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manual Billing - Mauli Traders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #00695c;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-section,
+        .bill-section {
+            margin-bottom: 30px;
+        }
+
+        .search-form,
+        .buyer-form,
+        .bill-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input,
+        select,
+        button {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #00796b;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #00796b;
+            color: white;
+        }
+
+        .message {
+            text-align: center;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Manual Billing - Mauli Traders</h1>
+
+    {% if messages %}
+    <div class="message">
+        {% for message in messages %}
+        <p>{{ message|safe }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="search-section">
+            <h2>1️⃣ Search & Add Products</h2>
+            <form method="get" class="search-form">
+                <input type="text" name="q" placeholder="Search by name or brand" value="{{ request.GET.q }}">
+                <button type="submit">Search</button>
+            </form>
+
+            {% if products %}
+            <form id="add-item-form" onsubmit="return addItem(event)">
+                <select id="product-select" required>
+                    <option value="">-- Choose Product --</option>
+                    {% for product in products %}
+                    <option value="{{ product.id }}" data-name="{{ product.name }}" data-brand="{{ product.brand }}"
+                        data-price="{{ product.retail_price }}" data-stock="{{ product.box_quantity }}">
+                        {{ product.name }} ({{ product.brand }}) - ₹{{ product.retail_price }} (Stock: {{
+                        product.box_quantity }})
+                    </option>
+                    {% endfor %}
+                </select>
+                <input type="number" id="product-quantity" min="1" value="1" required>
+                <button type="submit">Add to Bill</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="bill-section">
+            <h2>2️⃣ Current Bill Items</h2>
+            <form method="post" id="billing-form">
+                {% csrf_token %}
+                <table id="bill-items-table" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Brand</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bill-items-body">
+                        <!-- JS will inject rows here -->
+                    </tbody>
+                </table>
+
+                <input type="hidden" name="product_data" id="product-data">
+
+                <div class="buyer-form">
+                    <h2>3️⃣ Buyer Details</h2>
+                    <label>Buyer Type</label>
+                    <select name="buyer_type" required>
+                        <option value="">-- Select --</option>
+                        <option value="retailer">Retailer</option>
+                        <option value="individual">Individual</option>
+                    </select>
+                    <label>Buyer Name</label>
+                    <input type="text" name="buyer_name" required>
+                    <label>Buyer Contact</label>
+                    <input type="text" name="buyer_contact" required>
+                    <label>Buyer Email</label>
+                    <input type="email" name="buyer_email" required>
+                    <button type="submit">Generate Bill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let billItems = [];
+
+        function addItem(event) {
+            event.preventDefault();
+            const select = document.getElementById('product-select');
+            const quantityInput = document.getElementById('product-quantity');
+            const id = select.value;
+            if (!id) return;
+
+            const selected = select.options[select.selectedIndex];
+            const name = selected.getAttribute('data-name');
+            const brand = selected.getAttribute('data-brand');
+            const price = parseFloat(selected.getAttribute('data-price'));
+            const stock = parseInt(selected.getAttribute('data-stock'));
+            const quantity = parseInt(quantityInput.value);
+
+            if (quantity > stock) {
+                alert(`Not enough stock! Available: ${stock}`);
+                return;
+            }
+
+            // Check if already in cart
+            const existing = billItems.find(item => item.id === id);
+            if (existing) {
+                existing.quantity += quantity;
+            } else {
+                billItems.push({ id, name, brand, price, quantity });
+            }
+
+            renderBillTable();
+            quantityInput.value = 1;
+            select.value = "";
+        }
+
+        function removeItem(index) {
+            billItems.splice(index, 1);
+            renderBillTable();
+        }
+
+        function renderBillTable() {
+            const table = document.getElementById('bill-items-table');
+            const body = document.getElementById('bill-items-body');
+            const hiddenInput = document.getElementById('product-data');
+
+            body.innerHTML = "";
+
+            if (billItems.length === 0) {
+                table.style.display = "none";
+                hiddenInput.value = "";
+                return;
+            }
+
+            table.style.display = "table";
+            billItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.brand}</td>
+                    <td>₹${item.price.toFixed(2)}</td>
+                    <td>${item.quantity}</td>
+                    <td>₹${(item.price * item.quantity).toFixed(2)}</td>
+                    <td><button type="button" onclick="removeItem(${index})">Remove</button></td>
+                `;
+                body.appendChild(row);
+            });
+
+            hiddenInput.value = JSON.stringify(billItems);
+        }
+    </script>
+</body>
+
+</html>

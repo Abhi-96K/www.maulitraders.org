@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Register - Mauli Traders{% endblock %}
+
+
+{% block css_links %}
+<link rel="stylesheet" href="{% static 'main/css/products.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<section class="product-gallery" style="background:linear-gradient(45deg, white, rgb(33, 33, 33))">
+    <h1>Explore Our Building Materials</h1>
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card fade-in">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            <h3>{{ product.name }}</h3>
+            <p class="description">{{ product.description|truncatewords:20 }}</p>
+
+            {% if is_shop_user %}
+            <p><strong>Wholesale Price:</strong> ₹{{ product.wholesale_price }}</p>
+            <p><strong>Box Quantity:</strong> {{ product.box_quantity }}</p>
+            {% else %}
+            <p><strong>Retail Price:</strong> ₹{{ product.retail_price }}</p>
+            <p><strong>Discount:</strong> {{ product.discount }}%</p>
+            {% endif %}
+            <a href="{{ product.purchase_link }}" class="buy-btn" target="_blank">Purchase</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

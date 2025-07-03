@@ -1,0 +1,12 @@
+{% extends 'main/base.html' %}
+{% block title %}Purchase - Mauli Traders{% endblock %}
+{% block content %}
+<h2>Purchase {{ product.name }}</h2>
+<p>Price: ₹{{ product.retail_price }}</p>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="buyer_name" placeholder="Your Name" required>
+    <input type="email" name="buyer_email" placeholder="Your Email" required>
+    <button type="submit">Buy Now</button>
+</form>
+{% endblock %}
