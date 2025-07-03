@@ -167,6 +167,24 @@
     <script>
         let billItems = [];
 
+        // Load bill items from localStorage on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedItems = localStorage.getItem("billItems");
+            if (savedItems) {
+                try {
+                    billItems = JSON.parse(savedItems);
+                    renderBillTable();
+                } catch (e) {
+                    console.error("Failed to parse saved bill items:", e);
+                    localStorage.removeItem("billItems");
+                }
+            }
+        });
+
+        function saveBillItems() {
+            localStorage.setItem("billItems", JSON.stringify(billItems));
+        }
+
         function addItem(event) {
             event.preventDefault();
             const select = document.getElementById('product-select');
@@ -194,6 +212,7 @@
                 billItems.push({ id, name, brand, price, quantity });
             }
 
+            saveBillItems();
             renderBillTable();
             quantityInput.value = 1;
             select.value = "";
@@ -201,6 +220,7 @@
 
         function removeItem(index) {
             billItems.splice(index, 1);
+            saveBillItems();
             renderBillTable();
         }
 
@@ -221,13 +241,13 @@
             billItems.forEach((item, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${item.name}</td>
-                    <td>${item.brand}</td>
-                    <td>₹${item.price.toFixed(2)}</td>
-                    <td>${item.quantity}</td>
-                    <td>₹${(item.price * item.quantity).toFixed(2)}</td>
-                    <td><button type="button" onclick="removeItem(${index})">Remove</button></td>
-                `;
+                <td>${item.name}</td>
+                <td>${item.brand}</td>
+                <td>₹${item.price.toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>₹${(item.price * item.quantity).toFixed(2)}</td>
+                <td><button type="button" onclick="removeItem(${index})">Remove</button></td>
+            `;
                 body.appendChild(row);
             });
 
