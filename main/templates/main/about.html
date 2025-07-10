@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .about-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background: linear-gradient(to right, #fefefe, #f0f7f7);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    animation: fadeIn 1s ease;
+    font-family: 'Helvetica Neue', sans-serif;
+  }
+
+  .about-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00796b;
+    animation: slideDown 1s ease;
+  }
+
+  .contact-section {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-left: 5px solid #00796b;
+    background-color: #e0f2f1;
+    border-radius: 8px;
+    animation: fadeUp 1.5s ease;
+  }
+
+  .contact-section h3 {
+    margin-top: 0;
+    color: #004d40;
+  }
+
+  .contact-item {
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #333;
+  }
+
+  .highlight {
+    color: #00796b;
+    font-weight: bold;
+  }
+
+  .whatsapp-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #25D366;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: background-color 0.3s;
+  }
+
+  .whatsapp-button:hover {
+    background-color: #128C7E;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+</style>
+
+<div class="about-container">
+  <h1 class="about-header">About Mauli Traders</h1>
+
+  <div class="contact-section">
+    <h3>📞 Contact Numbers</h3>
+    <p class="contact-item">98232 <span class="highlight">45370</span></p>
+    <p class="contact-item">98232 <span class="highlight">47970</span></p>
+    <p class="contact-item">90220 <span class="highlight">33088</span></p>
+  </div>
+
+  <div class="contact-section">
+    <h3>📧 Email Addresses</h3>
+    <p class="contact-item">1. <a href="mailto:maulitraders@gmail.com" class="highlight">maulitraders@gmail.com</a></p>
+    <p class="contact-item">2. <a href="mailto:vithalraner@gmail.com" class="highlight">vithalraner@gmail.com</a></p>
+  </div>
+
+  <div class="contact-section">
+    <h3>💬 WhatsApp</h3>
+    <p class="contact-item">Chat with us on WhatsApp: <span class="highlight">90220 33088</span></p>
+    <a class="whatsapp-button" href="https://wa.me/919022033088" target="_blank">Message on WhatsApp</a>
+  </div>
+</div>
+{% endblock %}
