@@ -5,7 +5,7 @@ from .forms import CustomUserForm , ShopDetailsForm
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from django.contrib.auth import logout, authenticate, login
-from .models import CustomUser, UserProfile, Product, SoldProduct
+from .models import CustomUser, UserProfile, Product, SoldProduct, Shop
 import random
 from django.core.mail import  EmailMultiAlternatives, EmailMessage
 from django.core.exceptions import ValidationError
@@ -22,9 +22,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 import json
-
-
-
 
 
 
@@ -53,15 +50,19 @@ def profile(request):
 def register(request):
     return render(request, 'main/register.html')
 
-
 def register_customer(request):
     if request.method == 'POST':
         form = CustomUserForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            
-            if CustomUser.objects.filter(email=email).exists():
-                form.add_error('email', 'This email is already registered.')
+            existing_user = CustomUser.objects.filter(email=email).first()
+
+            if existing_user:
+                if existing_user.is_email_verified:
+                    form.add_error('email', 'This email is already registered and verified.')
+                else:
+                    # Clean up old unverified user (optional)
+                    existing_user.delete()
             else:
                 try:
                     # Step 1: Create inactive user
@@ -69,16 +70,15 @@ def register_customer(request):
                         email=email,
                         password=form.cleaned_data['password'],
                         user_type='customer',
-                        is_active=False  # Inactive until email verified
+                        is_active=False  # inactive until OTP verified
                     )
 
-                    # Step 2: Create user profile
-                    UserProfile.objects.create(
-                        user=user,
-                        full_name=form.cleaned_data['full_name'],
-                        mobile=form.cleaned_data['mobile'],
-                        address=form.cleaned_data['address']
-                    )
+                    # Step 2: Update the already-created profile
+                    profile = user.userprofile  # created via signal
+                    profile.full_name = form.cleaned_data.get('full_name')
+                    profile.mobile = form.cleaned_data.get('mobile')
+                    profile.address = form.cleaned_data.get('address')
+                    profile.save()
 
                     # Step 3: Generate OTP
                     otp = generate_otp()
@@ -92,33 +92,33 @@ def register_customer(request):
                     # Step 5: Store email in session to verify
                     request.session['pending_user_email'] = user.email
 
-                    # Step 6: Redirect to email verification
+                    # Step 6: Redirect to verification page
                     return redirect('verify_email')
 
                 except IntegrityError:
                     form.add_error('email', 'This email is already in use.')
         else:
-            messages.error(request, "password mismatched please enter the matching password.")
+            messages.error(request, "Password mismatched, please enter the matching password.")
     else:
         form = CustomUserForm()
 
     return render(request, 'main/register_customer.html', {'form': form})
+
+def generate_otp():
+    return str(random.randint(100000, 999999))
 
 
 def register_s1(request):
     if request.method == 'POST':
         form = CustomUserForm(request.POST)
         if form.is_valid():
+            # Save step 1 details in session
             request.session['shop_register_data'] = {
-               
                 'email': form.cleaned_data['email'],
                 'password': form.cleaned_data['password'],
                 'full_name': form.cleaned_data['full_name'],
                 'mobile': form.cleaned_data['mobile'],
                 'address': form.cleaned_data['address'],
-               
-
-
             }
             return redirect('register_s2')
         else:
@@ -126,7 +126,6 @@ def register_s1(request):
     else:
         form = CustomUserForm()
     return render(request, 'main/register_s1.html', {'form': form})
-
 
 def register_s2(request):
     if 'shop_register_data' not in request.session:
@@ -138,9 +137,15 @@ def register_s2(request):
             data = request.session.get('shop_register_data')
             email = data['email']
 
-            if CustomUser.objects.filter(email=email).exists():
-                messages.error(request, "This email is already registered.")
-                return redirect('register_s1')
+            # 🔥 FIXED: check if user exists
+            existing_user = CustomUser.objects.filter(email=email).first()
+            if existing_user:
+                if existing_user.is_email_verified:
+                    messages.error(request, "This email is already registered and verified.")
+                    return redirect('register_s1')
+                else:
+                    # Purana unverified user delete kar
+                    existing_user.delete()
 
             try:
                 # Step 1: Create inactive shop user
@@ -152,19 +157,21 @@ def register_s2(request):
                     is_active=False  # Wait for email verification
                 )
 
-                # Step 2: Save profile
-                UserProfile.objects.create(
-                    user=user,
-                    full_name=data['full_name'],
-                    mobile=data['mobile'],
-                    address=data['address']
-                )
+                # Step 2: Update existing userprofile (not create again)
+                profile = user.userprofile
+                profile.full_name = data['full_name']
+                profile.mobile = data['mobile']
+                profile.address = data['address']
+                profile.save()
 
-                # Step 3: Save shop details
-                user.shop_name = form.cleaned_data['shop_name']
-                user.city = form.cleaned_data['city']
-                user.gst_number = form.cleaned_data.get('gst_number')
-                user.shop_registration_number = form.cleaned_data.get('shop_registration_number')
+                # Step 3: Save shop details in Shop model
+                Shop.objects.create(
+                    user=user,
+                    shop_name=form.cleaned_data['shop_name'],
+                    city=form.cleaned_data['city'],
+                    gst_number=form.cleaned_data.get('gst_number'),
+                    shop_registration_number=form.cleaned_data.get('shop_registration_number'),
+                )
 
                 # Step 4: Generate OTP
                 otp = generate_otp()
@@ -172,10 +179,10 @@ def register_s2(request):
                 user.otp_created_at = timezone.now()
                 user.save()
 
-                # Step 5: Send OTP to email
+                # Step 5: Send OTP
                 send_otp_email(user.email, otp)
 
-                # Step 6: Clear session and redirect
+                # Step 6: Clear session & redirect
                 del request.session['shop_register_data']
                 request.session['pending_user_email'] = user.email
 
@@ -189,7 +196,6 @@ def register_s2(request):
         form = ShopDetailsForm()
 
     return render(request, 'main/register_s2.html', {'form': form})
-        
 
 def generate_otp():
     return str(random.randint(100000, 999999))
