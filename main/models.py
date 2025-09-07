@@ -108,6 +108,15 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+class Shop(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    shop_name = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    gst_number = models.CharField(max_length=50, blank=True, null=True)
+    shop_registration_number = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.shop_name
 
 
 class Order(models.Model):
